@@ -1,0 +1,6 @@
+# Explicitly allow the native dependency setup needed by Next.js, Sass, and ESLint.
+allowBuilds:
+  '@parcel/watcher': true
+  '@tailwindcss/oxide': true
+  sharp: true
+  unrs-resolver: true
