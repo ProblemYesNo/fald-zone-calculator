@@ -78,6 +78,16 @@ Approving reviews are optional so a sole maintainer can merge their own PR.
 The configuration is recorded in [.github/main-ruleset.json](.github/main-ruleset.json).
 GitHub enforces the remote ruleset; this JSON file documents its configuration.
 
+All other branches must use one of these prefixes with a nonempty description:
+
+- `feat/` or `feature/` for features, such as `feat/github-ci-cd`.
+- `bugfix/` for fixes, such as `bugfix/fullscreen-controls`.
+- `docs/` for documentation, such as `docs/deployment-guide`.
+
+The branch naming ruleset has no bypass actors and excludes `main`, which keeps
+its separate PR and CI protections. Its configuration is recorded in
+[.github/branch-naming-ruleset.json](.github/branch-naming-ruleset.json).
+
 To activate it:
 
 1. In the repository's **Settings → Pages → Build and deployment**, select
