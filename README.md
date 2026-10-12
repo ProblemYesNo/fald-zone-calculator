@@ -56,6 +56,71 @@ Project conventions and scope are documented in [AGENT.md](./AGENT.md).
 `AGENTS.md` directs coding agents to that guide. The monochrome design is inspired by dpi.lv. The header stays at the top; the
 footer sits at the bottom of short pages and follows longer content naturally.
 
+## CI/CD on GitHub
+
+[CI](.github/workflows/ci.yml) runs when a pull request targeting `main` is
+opened, updated with new commits, or reopened. The required `Validate and build`
+check runs lint, type checking, calculation tests, and a static production build.
+It uses Node.js 22, the pnpm version pinned in `package.json`, a cached pnpm store,
+and a frozen lockfile install.
+
+[CD](.github/workflows/cd.yml) runs only through `workflow_dispatch`, separately
+from CI. Pushes, pull requests, and merges do not deploy. A manual run on `main`
+revalidates and builds the selected commit, then deploys that run's artifact to
+GitHub Pages using GitHub's built-in token. Runs on other branches are skipped.
+No deployment secrets are needed. A future Codex/Linear/GitHub integration can
+invoke the same dispatch API; no integration is configured yet.
+
+The active `main` ruleset requires a pull request and a passing, up-to-date
+`Validate and build` check before merging. Direct pushes, force pushes, and
+branch deletion are blocked, with no bypass actors (including administrators).
+Approving reviews are optional so a sole maintainer can merge their own PR.
+The configuration is recorded in [.github/main-ruleset.json](.github/main-ruleset.json).
+GitHub enforces the remote ruleset; this JSON file documents its configuration.
+
+All other branches must use one of these prefixes with a nonempty description:
+
+- `feat/` or `feature/` for features, such as `feat/github-ci-cd`.
+- `bugfix/` for fixes, such as `bugfix/fullscreen-controls`.
+- `docs/` for documentation, such as `docs/deployment-guide`.
+
+The branch naming ruleset has no bypass actors and excludes `main`, which keeps
+its separate PR and CI protections. Its configuration is recorded in
+[.github/branch-naming-ruleset.json](.github/branch-naming-ruleset.json).
+
+To activate it:
+
+1. In the repository's **Settings → Pages → Build and deployment**, select
+   **GitHub Actions** as the source.
+2. Create a branch, push it, and open a pull request targeting `main`.
+3. Wait for **CI** to pass, then merge the pull request.
+4. Choose **Actions → CD → Run workflow** with `main` selected when ready to
+   deploy. The deployment job reports the published URL:
+   https://problemyesno.github.io/fald-zone-calculator/.
+
+After the CD workflow is merged into `main`, deployments can also be dispatched
+through the authenticated GitHub CLI:
+
+```sh
+gh workflow run cd.yml --repo ProblemYesNo/fald-zone-calculator --ref main
+```
+
+The build defaults to the repository name as its URL base path. For a custom
+domain or a repository named `<owner>.github.io`, set the repository Actions
+variable `PAGES_BASE_PATH` to `/`. For a different path, set it to `/your-path`
+without a trailing slash. Changing the path requires a new build.
+
+Reproduce the Pages build locally:
+
+```sh
+STATIC_EXPORT=true NEXT_PUBLIC_BASE_PATH=/fald-zone-calculator pnpm build
+```
+
+The exported site is in `out/` and needs a static web server. Ordinary
+`pnpm build` and `pnpm start` continue to use the Next.js server.
+See the [GitHub Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
+for the deployment environment and publishing-source settings.
+
 ## GitHub authentication on CachyOS
 
 Install GitHub CLI and sign in using its browser flow, outside the application:

@@ -31,6 +31,15 @@ Run lint, typecheck, tests, and build after substantial changes. Report any chec
 blocked by the environment accurately. Add meaningful tests when calculation
 behavior changes; avoid tests that merely duplicate the implementation.
 
+## GitHub workflow and branch rules
+
+- Work on branches named `feat/<description>` or `feature/<description>` for
+  features, `bugfix/<description>` for fixes, and `docs/<description>` for docs.
+- Never push directly to `main`. Open a pull request and merge after the required
+  `Validate and build` CI check passes against the latest `main`.
+- CI runs on PR creation and updates. CD is a separate manual workflow dispatched
+  on `main`; do not trigger deployment merely because a PR is merged.
+
 ## Source map
 
 - src/app/page.tsx: calculator page entry point.
