@@ -4,7 +4,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "FALD Zone Size Calculator",
   description: "Calculate and visualize full array local dimming (FALD) zone sizes for displays.",
-  icons: { icon: "/favicon.svg" },
+  icons: {
+    icon: `${(process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "")}/favicon.svg`,
+  },
 };
 
 export default function RootLayout({
